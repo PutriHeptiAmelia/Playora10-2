@@ -26,14 +26,13 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item"><a class="nav-link mx-2" href="#">Daftar Lapangan</a></li>
-                    <li class="nav-item"><a class="nav-link mx-2" href="#">Cek Booking</a></li>
-                    <li class="nav-item ms-lg-3">
-                        <a class="btn btn-outline-primary me-2" href="#">Login</a>
-                    </li>
                     <li class="nav-item">
-                        <a class="btn btn-primary" href="#">Daftar Sekarang</a>
-                    </li>
+    <a class="nav-link" href="{{ route('lapangan.index') }}">Daftar Lapangan</a>
+</li>
+
+<li class="nav-item">
+    <a class="nav-link" href="{{ route('booking.index') }}">Cek Booking</a>
+</li>
                 </ul>
             </div>
         </div>
