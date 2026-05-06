@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Pembayaran;
 use App\Models\Booking;
+use App\Notifications\PembayaranNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -48,6 +49,12 @@ class PembayaranController extends Controller
             'status' => 'unpaid',
         ]);
 
+        // Kirim notifikasi ke user
+        $request->user()->notify(new PembayaranNotification(
+            $pembayaran,
+            'Pembayaran kamu berhasil disubmit, menunggu konfirmasi admin.'
+        ));
+
         return response()->json([
             'message' => 'Pembayaran berhasil disubmit',
             'data' => $pembayaran,
@@ -60,7 +67,7 @@ class PembayaranController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        $pembayaran = Pembayaran::findOrFail($id);
+        $pembayaran = Pembayaran::with('booking.user')->findOrFail($id);
 
         $request->validate([
             'status' => 'required|in:paid,rejected',
@@ -73,9 +80,14 @@ class PembayaranController extends Controller
 
         if ($request->status === 'paid') {
             $pembayaran->booking->update(['status' => 'confirmed']);
+            $pesan = 'Pembayaran kamu telah dikonfirmasi, booking aktif!';
         } elseif ($request->status === 'rejected') {
             $pembayaran->booking->update(['status' => 'cancelled']);
+            $pesan = 'Pembayaran kamu ditolak oleh admin, silakan hubungi admin.';
         }
+
+        // Kirim notifikasi ke user
+        $pembayaran->booking->user->notify(new PembayaranNotification($pembayaran, $pesan));
 
         return response()->json([
             'message' => 'Status pembayaran berhasil diupdate',

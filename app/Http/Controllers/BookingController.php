@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use App\Models\Lapangan;
+use App\Notifications\BookingNotification;
 use Illuminate\Http\Request;
 
 class BookingController extends Controller
@@ -52,6 +53,12 @@ class BookingController extends Controller
             'status' => 'pending',
         ]);
 
+        // Kirim notifikasi ke user
+        $request->user()->notify(new BookingNotification(
+            $booking->load('lapangan'),
+            'Booking kamu berhasil dibuat, menunggu konfirmasi admin.'
+        ));
+
         return response()->json([
             'message' => 'Booking berhasil dibuat',
             'data' => $booking->load(['lapangan', 'pembayaran']),
@@ -75,13 +82,22 @@ class BookingController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        $booking = Booking::findOrFail($id);
+        $booking = Booking::with(['lapangan', 'user'])->findOrFail($id);
 
         $request->validate([
             'status' => 'required|in:pending,confirmed,cancelled',
         ]);
 
         $booking->update(['status' => $request->status]);
+
+        // Kirim notifikasi ke user
+        $pesan = match($request->status) {
+            'confirmed' => 'Booking kamu telah dikonfirmasi oleh admin!',
+            'cancelled' => 'Booking kamu telah dibatalkan oleh admin.',
+            default => 'Status booking kamu telah diupdate.',
+        };
+
+        $booking->user->notify(new BookingNotification($booking, $pesan));
 
         return response()->json([
             'message' => 'Status booking berhasil diupdate',
