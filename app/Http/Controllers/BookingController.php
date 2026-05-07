@@ -43,7 +43,6 @@ class BookingController extends Controller
             return back()->with('error', 'Lapangan tidak tersedia.');
         }
 
-        // Cek bentrok jadwal
         $bentrok = Booking::where('lapangan_id', $request->lapangan_id)
             ->where('tanggal', $request->tanggal)
             ->where('status', '!=', 'cancelled')
@@ -73,13 +72,31 @@ class BookingController extends Controller
             'status' => 'pending',
         ]);
 
-        // Kirim notifikasi
         Auth::user()->notify(new BookingNotification(
             $booking->load('lapangan'),
             'Booking kamu berhasil dibuat, menunggu konfirmasi admin.'
         ));
 
         return redirect()->route('booking.index')->with('success', 'Booking berhasil dibuat! Menunggu konfirmasi admin.');
+    }
+
+    public function showWeb($id)
+    {
+        $booking = Booking::with(['lapangan', 'pembayaran'])
+            ->where('user_id', Auth::id())
+            ->findOrFail($id);
+
+        return view('booking.show', compact('booking'));
+    }
+
+    public function riwayatWeb()
+    {
+        $bookings = Booking::with(['lapangan', 'pembayaran'])
+            ->where('user_id', Auth::id())
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('booking.riwayat', compact('bookings'));
     }
 
     // API
