@@ -6,6 +6,7 @@ use App\Models\Pembayaran;
 use App\Models\Booking;
 use App\Notifications\PembayaranNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class PembayaranController extends Controller
@@ -49,7 +50,6 @@ class PembayaranController extends Controller
             'status' => 'unpaid',
         ]);
 
-        // Kirim notifikasi ke user
         $request->user()->notify(new PembayaranNotification(
             $pembayaran,
             'Pembayaran kamu berhasil disubmit, menunggu konfirmasi admin.'
@@ -59,6 +59,40 @@ class PembayaranController extends Controller
             'message' => 'Pembayaran berhasil disubmit',
             'data' => $pembayaran,
         ], 201);
+    }
+
+    public function storeWeb(Request $request, $booking_id)
+    {
+        $request->validate([
+            'jumlah'      => 'required|numeric',
+            'bukti_bayar' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+        $booking = Booking::where('id', $booking_id)
+                          ->where('user_id', Auth::id())
+                          ->firstOrFail();
+
+        if ($booking->status !== 'confirmed') {
+            return back()->with('error', 'Booking belum dikonfirmasi admin, belum bisa bayar.');
+        }
+
+        $bukti_bayar = $request->file('bukti_bayar')->store('bukti_bayar', 'public');
+
+        $pembayaran = Pembayaran::updateOrCreate(
+            ['booking_id' => $booking_id],
+            [
+                'jumlah'      => $request->jumlah,
+                'bukti_bayar' => $bukti_bayar,
+                'status'      => 'unpaid',
+            ]
+        );
+
+        Auth::user()->notify(new PembayaranNotification(
+            $pembayaran,
+            'Bukti pembayaran kamu berhasil diupload, menunggu konfirmasi admin.'
+        ));
+
+        return redirect()->route('booking.riwayat')->with('success', 'Bukti pembayaran berhasil diupload!');
     }
 
     public function konfirmasi(Request $request, $id)
@@ -74,7 +108,7 @@ class PembayaranController extends Controller
         ]);
 
         $pembayaran->update([
-            'status' => $request->status,
+            'status'       => $request->status,
             'confirmed_at' => now(),
         ]);
 
@@ -86,7 +120,6 @@ class PembayaranController extends Controller
             $pesan = 'Pembayaran kamu ditolak oleh admin, silakan hubungi admin.';
         }
 
-        // Kirim notifikasi ke user
         $pembayaran->booking->user->notify(new PembayaranNotification($pembayaran, $pesan));
 
         return response()->json([
