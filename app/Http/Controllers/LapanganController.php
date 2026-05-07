@@ -7,14 +7,17 @@ use Illuminate\Http\Request;
 
 class LapanganController extends Controller
 {
-  public function index()
-{
-    // Mengambil data lapangan beserta jenis olahraganya
-    $lapangan = Lapangan::with('jenisOlahraga')->get();
-    
-    // Kirim data ke file view (Blade)
-    return view('lapangan.index', compact('lapangan'));
-}
+    public function index()
+    {
+        $lapangan = Lapangan::with('jenisOlahraga')->get();
+        return view('lapangan.index', compact('lapangan'));
+    }
+
+    public function show($id)
+    {
+        $lapangan = Lapangan::with('jenisOlahraga')->findOrFail($id);
+        return view('lapangan.show', compact('lapangan'));
+    }
 
     public function store(Request $request)
     {
@@ -32,12 +35,6 @@ class LapanganController extends Controller
             'message' => 'Lapangan berhasil ditambahkan',
             'data' => $data,
         ], 201);
-    }
-
-    public function show($id)
-    {
-        $data = Lapangan::with('jenisOlahraga')->findOrFail($id);
-        return response()->json($data);
     }
 
     public function update(Request $request, $id)

@@ -6,9 +6,83 @@ use App\Models\Booking;
 use App\Models\Lapangan;
 use App\Notifications\BookingNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class BookingController extends Controller
 {
+    // WEB
+    public function indexWeb()
+    {
+        $bookings = Booking::with(['lapangan', 'pembayaran'])
+            ->where('user_id', Auth::id())
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('booking.index', compact('bookings'));
+    }
+
+    public function createWeb($lapangan_id)
+    {
+        $lapangan = Lapangan::with('jenisOlahraga')->findOrFail($lapangan_id);
+        return view('booking.create', compact('lapangan'));
+    }
+
+    public function storeWeb(Request $request)
+    {
+        $request->validate([
+            'lapangan_id' => 'required|exists:lapangan,id',
+            'tanggal' => 'required|date|after_or_equal:today',
+            'jam_mulai' => 'required',
+            'jam_selesai' => 'required',
+            'durasi_jam' => 'required|integer|min:1|max:12',
+        ]);
+
+        $lapangan = Lapangan::findOrFail($request->lapangan_id);
+
+        if ($lapangan->status === 'inactive') {
+            return back()->with('error', 'Lapangan tidak tersedia.');
+        }
+
+        // Cek bentrok jadwal
+        $bentrok = Booking::where('lapangan_id', $request->lapangan_id)
+            ->where('tanggal', $request->tanggal)
+            ->where('status', '!=', 'cancelled')
+            ->where(function ($query) use ($request) {
+                $query->whereBetween('jam_mulai', [$request->jam_mulai, $request->jam_selesai])
+                    ->orWhereBetween('jam_selesai', [$request->jam_mulai, $request->jam_selesai])
+                    ->orWhere(function ($query) use ($request) {
+                        $query->where('jam_mulai', '<=', $request->jam_mulai)
+                            ->where('jam_selesai', '>=', $request->jam_selesai);
+                    });
+            })->exists();
+
+        if ($bentrok) {
+            return back()->with('error', 'Lapangan sudah dipesan pada jam tersebut, silakan pilih jam lain.');
+        }
+
+        $total_harga = $lapangan->harga_per_jam * $request->durasi_jam;
+
+        $booking = Booking::create([
+            'user_id' => Auth::id(),
+            'lapangan_id' => $request->lapangan_id,
+            'tanggal' => $request->tanggal,
+            'jam_mulai' => $request->jam_mulai,
+            'jam_selesai' => $request->jam_selesai,
+            'durasi_jam' => $request->durasi_jam,
+            'total_harga' => $total_harga,
+            'status' => 'pending',
+        ]);
+
+        // Kirim notifikasi
+        Auth::user()->notify(new BookingNotification(
+            $booking->load('lapangan'),
+            'Booking kamu berhasil dibuat, menunggu konfirmasi admin.'
+        ));
+
+        return redirect()->route('booking.index')->with('success', 'Booking berhasil dibuat! Menunggu konfirmasi admin.');
+    }
+
+    // API
     public function index(Request $request)
     {
         if ($request->user()->role === 'admin') {
@@ -35,12 +109,9 @@ class BookingController extends Controller
         $lapangan = Lapangan::findOrFail($request->lapangan_id);
 
         if ($lapangan->status === 'inactive') {
-            return response()->json([
-                'message' => 'Lapangan tidak tersedia',
-            ], 400);
+            return response()->json(['message' => 'Lapangan tidak tersedia'], 400);
         }
 
-        // Cek apakah jam sudah dipesan
         $bentrok = Booking::where('lapangan_id', $request->lapangan_id)
             ->where('tanggal', $request->tanggal)
             ->where('status', '!=', 'cancelled')
@@ -54,9 +125,7 @@ class BookingController extends Controller
             })->exists();
 
         if ($bentrok) {
-            return response()->json([
-                'message' => 'Lapangan sudah dipesan pada jam tersebut, silakan pilih jam lain.',
-            ], 400);
+            return response()->json(['message' => 'Lapangan sudah dipesan pada jam tersebut.'], 400);
         }
 
         $total_harga = $lapangan->harga_per_jam * $request->durasi_jam;
@@ -72,7 +141,6 @@ class BookingController extends Controller
             'status' => 'pending',
         ]);
 
-        // Kirim notifikasi ke user
         $request->user()->notify(new BookingNotification(
             $booking->load('lapangan'),
             'Booking kamu berhasil dibuat, menunggu konfirmasi admin.'
@@ -132,8 +200,6 @@ class BookingController extends Controller
         $booking = Booking::findOrFail($id);
         $booking->delete();
 
-        return response()->json([
-            'message' => 'Booking berhasil dihapus',
-        ]);
+        return response()->json(['message' => 'Booking berhasil dihapus']);
     }
 }
