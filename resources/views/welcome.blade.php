@@ -42,7 +42,7 @@
             </div>
         </div>
         <div class="col-lg-6 d-none d-lg-block text-center">
-            <img src="https://img.freepik.com/free-vector/soccer-players-action-stadium_1150-15367.jpg" alt="Sport Illustration" class="img-fluid rounded-4 shadow">
+            <img src="{{ asset('images/hero-lapangan.jpg') }}" class="card-img-top" alt="Lapangan Futsal Playora" style="object-fit: cover; height: 400px;">
         </div>
     </div>
 
