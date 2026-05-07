@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LapanganController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\PembayaranController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\LoginController;
 
 // Halaman utama
@@ -27,10 +28,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/booking', [BookingController::class, 'indexWeb'])->name('booking.index');
     Route::get('/booking/create/{lapangan_id}', [BookingController::class, 'createWeb'])->name('booking.create');
     Route::post('/booking', [BookingController::class, 'storeWeb'])->name('booking.store');
-    Route::get('/booking/{id}', [BookingController::class, 'showWeb'])->name('booking.show');
-    Route::get('/riwayat', [BookingController::class, 'riwayatWeb'])->name('booking.riwayat');
-    Route::post('/pembayaran/{booking_id}', [PembayaranController::class, 'storeWeb'])->name('pembayaran.store');
-    Route::get('/notifikasi', function () {
-        return view('notifikasi', ['notifikasi' => auth()->user()->notifications]);
-    })->name('notifikasi.index');
+
+    Route::get('/pembayaran/create/{booking_id}', [PembayaranController::class, 'createWeb'])->name('pembayaran.create');
+    Route::post('/pembayaran', [PembayaranController::class, 'storeWeb'])->name('pembayaran.store');
+});
+
+// Admin routes
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/bookings', [AdminController::class, 'bookings'])->name('bookings');
+    Route::put('/bookings/{id}', [AdminController::class, 'updateBooking'])->name('booking.update');
+    Route::get('/pembayaran', [AdminController::class, 'pembayaran'])->name('pembayaran');
+    Route::put('/pembayaran/{id}/konfirmasi', [AdminController::class, 'konfirmasiPembayaran'])->name('pembayaran.konfirmasi');
 });

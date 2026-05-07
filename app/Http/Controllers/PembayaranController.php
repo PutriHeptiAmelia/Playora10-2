@@ -11,6 +11,53 @@ use Illuminate\Support\Facades\Storage;
 
 class PembayaranController extends Controller
 {
+    // WEB
+    public function createWeb($booking_id)
+    {
+        $booking = Booking::with('lapangan')->findOrFail($booking_id);
+
+        if ($booking->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        return view('pembayaran.create', compact('booking'));
+    }
+
+    public function storeWeb(Request $request)
+    {
+        $request->validate([
+            'booking_id' => 'required|exists:bookings,id',
+            'jumlah' => 'required|numeric',
+            'bukti_bayar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+        $booking = Booking::findOrFail($request->booking_id);
+
+        if ($booking->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $bukti_bayar = null;
+        if ($request->hasFile('bukti_bayar')) {
+            $bukti_bayar = $request->file('bukti_bayar')->store('bukti_bayar', 'public');
+        }
+
+        $pembayaran = Pembayaran::create([
+            'booking_id' => $request->booking_id,
+            'jumlah' => $request->jumlah,
+            'bukti_bayar' => $bukti_bayar,
+            'status' => 'unpaid',
+        ]);
+
+        Auth::user()->notify(new PembayaranNotification(
+            $pembayaran,
+            'Pembayaran kamu berhasil disubmit, menunggu konfirmasi admin.'
+        ));
+
+        return redirect()->route('booking.index')->with('success', 'Pembayaran berhasil disubmit! Menunggu konfirmasi admin.');
+    }
+
+    // API
     public function index(Request $request)
     {
         if ($request->user()->role === 'admin') {
@@ -61,40 +108,6 @@ class PembayaranController extends Controller
         ], 201);
     }
 
-    public function storeWeb(Request $request, $booking_id)
-    {
-        $request->validate([
-            'jumlah'      => 'required|numeric',
-            'bukti_bayar' => 'required|image|mimes:jpg,jpeg,png|max:2048',
-        ]);
-
-        $booking = Booking::where('id', $booking_id)
-                          ->where('user_id', Auth::id())
-                          ->firstOrFail();
-
-        if ($booking->status !== 'confirmed') {
-            return back()->with('error', 'Booking belum dikonfirmasi admin, belum bisa bayar.');
-        }
-
-        $bukti_bayar = $request->file('bukti_bayar')->store('bukti_bayar', 'public');
-
-        $pembayaran = Pembayaran::updateOrCreate(
-            ['booking_id' => $booking_id],
-            [
-                'jumlah'      => $request->jumlah,
-                'bukti_bayar' => $bukti_bayar,
-                'status'      => 'unpaid',
-            ]
-        );
-
-        Auth::user()->notify(new PembayaranNotification(
-            $pembayaran,
-            'Bukti pembayaran kamu berhasil diupload, menunggu konfirmasi admin.'
-        ));
-
-        return redirect()->route('booking.riwayat')->with('success', 'Bukti pembayaran berhasil diupload!');
-    }
-
     public function konfirmasi(Request $request, $id)
     {
         if ($request->user()->role !== 'admin') {
@@ -108,7 +121,7 @@ class PembayaranController extends Controller
         ]);
 
         $pembayaran->update([
-            'status'       => $request->status,
+            'status' => $request->status,
             'confirmed_at' => now(),
         ]);
 
