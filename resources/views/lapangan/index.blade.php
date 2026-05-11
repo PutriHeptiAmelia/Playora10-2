@@ -15,8 +15,12 @@
         @forelse($lapangan as $l)
             <div class="col-md-4 mb-4">
                 <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
-                    <img src="https://placehold.co/600x400/16a34a/white?text={{ urlencode($l->nama) }}"
-                         class="card-img-top" alt="{{ $l->nama }}">
+                    @php
+                        $imageName = lcfirst(str_replace(' ', '', $l->nama)) . '.jpg.jpeg';
+                        $imagePath = public_path('images/' . $imageName);
+                        $imageUrl = file_exists($imagePath) ? asset('images/' . $imageName) : asset('images/hero-lapangan.jpg');
+                    @endphp
+                    <img src="{{ $imageUrl }}" class="card-img-top" alt="{{ $l->nama }}" style="height: 200px; object-fit: cover;">
 
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-center mb-2">

@@ -6,8 +6,12 @@
 <div class="container py-5">
     <div class="row">
         <div class="col-lg-7">
-            <img src="https://placehold.co/800x500/16a34a/white?text={{ urlencode($lapangan->nama) }}"
-                 class="img-fluid rounded-4 shadow w-100" alt="{{ $lapangan->nama }}">
+            @php
+                $imageName = lcfirst(str_replace(' ', '', $lapangan->nama)) . '.jpg.jpeg';
+                $imagePath = public_path('images/' . $imageName);
+                $imageUrl = file_exists($imagePath) ? asset('images/' . $imageName) : asset('images/hero-lapangan.jpg');
+            @endphp
+            <img src="{{ $imageUrl }}" class="img-fluid rounded-4 shadow w-100" alt="{{ $lapangan->nama }}" style="max-height: 500px; object-fit: cover;">
         </div>
         <div class="col-lg-5 mt-4 mt-lg-0">
             <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
