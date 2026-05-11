@@ -70,6 +70,11 @@
                             <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3">
                                 @if(Auth::user()->role !== 'admin')
                                     <li>
+                                        <a class="dropdown-item" href="{{ route('profil.index') }}">
+                                            <i class="bi bi-person me-2"></i>Profil Saya
+                                        </a>
+                                    </li>
+                                    <li>
                                         <a class="dropdown-item" href="{{ route('notifikasi.index') }}">
                                             <i class="bi bi-bell me-2"></i>Notifikasi
                                             @if(Auth::user()->unreadNotifications->count() > 0)

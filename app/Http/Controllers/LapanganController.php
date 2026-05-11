@@ -3,14 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Models\Lapangan;
+use App\Models\JenisOlahraga;
 use Illuminate\Http\Request;
 
 class LapanganController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $lapangan = Lapangan::with('jenisOlahraga')->get();
-        return view('lapangan.index', compact('lapangan'));
+        $jenisOlahraga = JenisOlahraga::all();
+        $query = Lapangan::with('jenisOlahraga');
+
+        if ($request->has('jenis') && $request->jenis != '') {
+            $query->where('jenis_olahraga_id', $request->jenis);
+        }
+
+        $lapangan = $query->get();
+        return view('lapangan.index', compact('lapangan', 'jenisOlahraga'));
     }
 
     public function show($id)

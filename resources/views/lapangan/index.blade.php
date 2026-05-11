@@ -11,6 +11,21 @@
         </div>
     </div>
 
+    {{-- Filter --}}
+    <div class="mb-4">
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="{{ route('lapangan.index') }}" class="btn {{ !request('jenis') ? 'btn-primary' : 'btn-outline-secondary' }} rounded-pill px-4">
+                Semua
+            </a>
+            @foreach($jenisOlahraga as $j)
+                <a href="{{ route('lapangan.index', ['jenis' => $j->id]) }}"
+                   class="btn {{ request('jenis') == $j->id ? 'btn-primary' : 'btn-outline-secondary' }} rounded-pill px-4">
+                    {{ $j->nama }}
+                </a>
+            @endforeach
+        </div>
+    </div>
+
     <div class="row">
         @forelse($lapangan as $l)
             <div class="col-md-4 mb-4">
