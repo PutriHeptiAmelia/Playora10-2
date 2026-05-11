@@ -1,71 +1,243 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Kelola Booking')
 
 @section('content')
-<div class="container py-5">
-    <h4 class="fw-bold mb-4">Kelola Booking</h4>
+
+<div class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h3 class="fw-bold mb-1" style="color:#16a34a;">
+                Kelola Booking
+            </h3>
+
+            <p class="text-light opacity-75 mb-0">
+                Kelola seluruh data booking pengguna Playora
+            </p>
+        </div>
+
+        <div class="px-4 py-2 rounded-4"
+             style="background:rgba(22,163,74,0.15);
+             border:1px solid rgba(22,163,74,0.25);">
+
+            <span class="fw-semibold text-success">
+                Total:
+            </span>
+
+            <span class="text-white">
+                {{ $bookings->count() }} Booking
+            </span>
+
+        </div>
+
+    </div>
 
     @if(session('success'))
-        <div class="alert alert-success rounded-3">{{ session('success') }}</div>
+
+        <div class="alert border-0 rounded-4 mb-4"
+             style="background:rgba(22,163,74,0.15);
+             color:#4ade80;
+             border:1px solid rgba(22,163,74,0.25) !important;">
+
+            <i class="bi bi-check-circle-fill me-2"></i>
+            {{ session('success') }}
+
+        </div>
+
     @endif
 
-    <div class="card border-0 shadow-sm rounded-4 p-4">
+    <div class="card border-0 shadow-lg rounded-4 overflow-hidden"
+         style="background:rgba(255,255,255,0.06);
+         backdrop-filter:blur(12px);
+         border:1px solid rgba(255,255,255,0.05);">
+
         <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead style="background-color:#f0fdf4;">
+
+            <table class="table align-middle mb-0 text-white">
+
+                <thead style="background:rgba(22,163,74,0.15);">
+
                     <tr>
-                        <th>User</th>
-                        <th>Lapangan</th>
-                        <th>Tanggal</th>
-                        <th>Jam</th>
-                        <th>Total</th>
-                        <th>Status</th>
-                        <th>Aksi</th>
+
+                        <th class="border-0 px-4 py-3">User</th>
+                        <th class="border-0 px-4 py-3">Lapangan</th>
+                        <th class="border-0 px-4 py-3">Tanggal</th>
+                        <th class="border-0 px-4 py-3">Jam</th>
+                        <th class="border-0 px-4 py-3">Total</th>
+                        <th class="border-0 px-4 py-3">Status</th>
+                        <th class="border-0 px-4 py-3 text-center">Aksi</th>
+
                     </tr>
+
                 </thead>
+
                 <tbody>
+
                     @forelse($bookings as $booking)
-                        <tr>
-                            <td>{{ $booking->user->name }}</td>
-                            <td>{{ $booking->lapangan->nama }}</td>
-                            <td>{{ $booking->tanggal }}</td>
-                            <td>{{ $booking->jam_mulai }} - {{ $booking->jam_selesai }}</td>
-                            <td>Rp {{ number_format($booking->total_harga, 0, ',', '.') }}</td>
-                            <td>
+
+                        <tr style="border-color:rgba(255,255,255,0.05);">
+
+                            <td class="px-4 py-3 fw-semibold">
+                                <div class="d-flex align-items-center gap-3">
+
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                         style="width:42px;height:42px;
+                                         background:rgba(22,163,74,0.2);">
+
+                                        <i class="bi bi-person-fill text-success"></i>
+
+                                    </div>
+
+                                    {{ $booking->user->name }}
+
+                                </div>
+                            </td>
+
+                            <td class="px-4 py-3">
+                                {{ $booking->lapangan->nama }}
+                            </td>
+
+                            <td class="px-4 py-3">
+                                {{ $booking->tanggal }}
+                            </td>
+
+                            <td class="px-4 py-3">
+                                {{ $booking->jam_mulai }}
+                                -
+                                {{ $booking->jam_selesai }}
+                            </td>
+
+                            <td class="px-4 py-3 fw-semibold text-warning">
+                                Rp {{ number_format($booking->total_harga, 0, ',', '.') }}
+                            </td>
+
+                            <td class="px-4 py-3">
+
                                 @if($booking->status === 'pending')
-                                    <span class="badge bg-warning text-dark">Pending</span>
+
+                                    <span class="badge rounded-pill px-3 py-2"
+                                          style="background:rgba(234,179,8,0.15);
+                                          color:#facc15;">
+
+                                        <i class="bi bi-clock-history me-1"></i>
+                                        Pending
+
+                                    </span>
+
                                 @elseif($booking->status === 'confirmed')
-                                    <span class="badge bg-success">Confirmed</span>
+
+                                    <span class="badge rounded-pill px-3 py-2"
+                                          style="background:rgba(22,163,74,0.15);
+                                          color:#4ade80;">
+
+                                        <i class="bi bi-check-circle-fill me-1"></i>
+                                        Confirmed
+
+                                    </span>
+
                                 @else
-                                    <span class="badge bg-danger">Cancelled</span>
+
+                                    <span class="badge rounded-pill px-3 py-2"
+                                          style="background:rgba(239,68,68,0.15);
+                                          color:#f87171;">
+
+                                        <i class="bi bi-x-circle-fill me-1"></i>
+                                        Cancelled
+
+                                    </span>
+
                                 @endif
+
                             </td>
-                            <td>
+
+                            <td class="px-4 py-3 text-center">
+
                                 @if($booking->status === 'pending')
-                                    <form action="{{ route('admin.booking.update', $booking->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('PUT')
-                                        <input type="hidden" name="status" value="confirmed">
-                                        <button type="submit" class="btn btn-success btn-sm">Konfirmasi</button>
-                                    </form>
-                                    <form action="{{ route('admin.booking.update', $booking->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('PUT')
-                                        <input type="hidden" name="status" value="cancelled">
-                                        <button type="submit" class="btn btn-danger btn-sm">Batalkan</button>
-                                    </form>
+
+                                    <div class="d-flex gap-2 justify-content-center">
+
+                                        <form action="{{ route('admin.booking.update', $booking->id) }}"
+                                              method="POST">
+
+                                            @csrf
+                                            @method('PUT')
+
+                                            <input type="hidden"
+                                                   name="status"
+                                                   value="confirmed">
+
+                                            <button type="submit"
+                                                    class="btn btn-success btn-sm rounded-3 px-3">
+
+                                                <i class="bi bi-check-lg"></i>
+
+                                            </button>
+
+                                        </form>
+
+                                        <form action="{{ route('admin.booking.update', $booking->id) }}"
+                                              method="POST">
+
+                                            @csrf
+                                            @method('PUT')
+
+                                            <input type="hidden"
+                                                   name="status"
+                                                   value="cancelled">
+
+                                            <button type="submit"
+                                                    class="btn btn-danger btn-sm rounded-3 px-3">
+
+                                                <i class="bi bi-x-lg"></i>
+
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
                                 @else
-                                    <span class="text-muted small">-</span>
+
+                                    <span class="text-light opacity-50">
+                                        Selesai
+                                    </span>
+
                                 @endif
+
                             </td>
+
                         </tr>
+
                     @empty
-                        <tr><td colspan="7" class="text-center text-muted">Belum ada booking</td></tr>
+
+                        <tr>
+
+                            <td colspan="7"
+                                class="text-center py-5">
+
+                                <i class="bi bi-inbox"
+                                   style="font-size:3rem;color:#64748b;"></i>
+
+                                <p class="mt-3 mb-0 text-light opacity-75">
+                                    Belum ada data booking
+                                </p>
+
+                            </td>
+
+                        </tr>
+
                     @endforelse
+
                 </tbody>
+
             </table>
+
         </div>
+
     </div>
+
 </div>
+
 @endsection
