@@ -6,13 +6,12 @@
 
 {{-- HERO SECTION --}}
 <section style="background: linear-gradient(135deg, #0f2b1a 0%, #1a4731 50%, #0f2b1a 100%); min-height: 90vh; display: flex; align-items: center; position: relative; overflow: hidden;">
-    {{-- Background decoration --}}
     <div style="position:absolute; top:-100px; right:-100px; width:500px; height:500px; background:radial-gradient(circle, rgba(22,163,74,0.15) 0%, transparent 70%); border-radius:50%;"></div>
     <div style="position:absolute; bottom:-100px; left:-100px; width:400px; height:400px; background:radial-gradient(circle, rgba(249,115,22,0.1) 0%, transparent 70%); border-radius:50%;"></div>
 
     <div class="container py-5">
         <div class="row align-items-center g-5">
-            <div class="col-lg-6" data-aos="fade-right">
+            <div class="col-lg-6">
                 <span class="badge mb-4 px-4 py-2 rounded-pill" style="background: rgba(22,163,74,0.2); color: #4ade80; font-size: 0.85rem; border: 1px solid rgba(22,163,74,0.3);">
                     <i class="bi bi-star-fill me-1"></i>#1 Sport Reservation in Town
                 </span>
@@ -26,12 +25,8 @@
                     <a href="{{ route('lapangan.index') }}" class="btn btn-lg px-5 py-3 fw-bold" style="background: linear-gradient(135deg, #16a34a, #15803d); color: white; border: none; border-radius: 50px; box-shadow: 0 8px 25px rgba(22,163,74,0.4);">
                         <i class="bi bi-lightning-fill me-2"></i>Pesan Sekarang
                     </a>
-                    <a href="{{ route('lapangan.index') }}" class="btn btn-lg px-5 py-3 fw-bold" style="background: transparent; color: white; border: 2px solid rgba(255,255,255,0.3); border-radius: 50px;">
-                        <i class="bi bi-eye me-2"></i>Lihat Lapangan
-                    </a>
                 </div>
 
-                {{-- Stats --}}
                 <div class="row g-4">
                     <div class="col-4">
                         <div style="border-left: 3px solid #16a34a; padding-left: 16px;">
@@ -60,23 +55,6 @@
                     <img src="{{ asset('images/hero-lapangan.jpg') }}"
                          style="width:100%; height:450px; object-fit:cover; border-radius:22px; position:relative; z-index:1;"
                          alt="Lapangan Playora">
-                    {{-- Floating card --}}
-                    <div style="position:absolute; bottom:24px; left:-24px; background:white; border-radius:16px; padding:16px 20px; box-shadow:0 20px 40px rgba(0,0,0,0.3); z-index:2; min-width:180px;">
-                        <div class="d-flex align-items-center gap-3">
-                            <div style="width:44px;height:44px;background:#dcfce7;border-radius:12px;display:flex;align-items:center;justify-content:center;">
-                                <i class="bi bi-calendar-check" style="color:#16a34a;font-size:1.2rem;"></i>
-                            </div>
-                            <div>
-                                <p class="mb-0 fw-bold" style="color:#1e293b;font-size:0.9rem;">Booking Sukses!</p>
-                                <small style="color:#64748b;">Lapangan Futsal A</small>
-                            </div>
-                        </div>
-                    </div>
-                    {{-- Floating badge --}}
-                    <div style="position:absolute; top:24px; right:-16px; background:linear-gradient(135deg,#f97316,#ea580c); border-radius:16px; padding:12px 16px; box-shadow:0 10px 30px rgba(249,115,22,0.4); z-index:2;">
-                        <p class="mb-0 fw-bold text-white" style="font-size:0.85rem;">⚡ Real-time</p>
-                        <small class="text-white opacity-75">Cek Jadwal</small>
-                    </div>
                 </div>
             </div>
         </div>
@@ -180,10 +158,7 @@
         <div class="d-flex gap-3 justify-content-center flex-wrap">
             @guest
                 <a href="{{ route('register') }}" class="btn btn-lg px-5 py-3 fw-bold" style="background:linear-gradient(135deg,#16a34a,#15803d);color:white;border:none;border-radius:50px;box-shadow:0 8px 25px rgba(22,163,74,0.4);">
-                    <i class="bi bi-person-plus me-2"></i>Daftar Gratis
-                </a>
-                <a href="{{ route('login') }}" class="btn btn-lg px-5 py-3 fw-bold" style="background:transparent;color:white;border:2px solid rgba(255,255,255,0.3);border-radius:50px;">
-                    <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                    <i class="bi bi-person-plus me-2"></i>Daftar Sekarang
                 </a>
             @else
                 <a href="{{ route('lapangan.index') }}" class="btn btn-lg px-5 py-3 fw-bold" style="background:linear-gradient(135deg,#16a34a,#15803d);color:white;border:none;border-radius:50px;box-shadow:0 8px 25px rgba(22,163,74,0.4);">
