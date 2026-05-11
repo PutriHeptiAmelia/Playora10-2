@@ -148,4 +148,71 @@ class AdminController extends Controller
 
         return redirect()->route('admin.lapangan.index')->with('success', 'Lapangan berhasil dihapus!');
     }
+
+    // Kelola Jenis Olahraga
+    public function jenisOlahragaIndex()
+    {
+        $jenisOlahraga = JenisOlahraga::withCount('lapangan')->get();
+        return view('admin.jenis-olahraga', compact('jenisOlahraga'));
+    }
+
+    public function jenisOlahragaCreate()
+    {
+        return view('admin.jenis-olahraga-create');
+    }
+
+    public function jenisOlahragaStore(Request $request)
+    {
+        $request->validate([
+            'nama' => 'required|string|max:100',
+            'deskripsi' => 'nullable|string',
+        ]);
+
+        JenisOlahraga::create($request->all());
+
+        return redirect()->route('admin.jenis-olahraga.index')->with('success', 'Jenis olahraga berhasil ditambahkan!');
+    }
+
+    public function jenisOlahragaEdit($id)
+    {
+        $jenisOlahraga = JenisOlahraga::findOrFail($id);
+        return view('admin.jenis-olahraga-edit', compact('jenisOlahraga'));
+    }
+
+    public function jenisOlahragaUpdate(Request $request, $id)
+    {
+        $jenisOlahraga = JenisOlahraga::findOrFail($id);
+
+        $request->validate([
+            'nama' => 'required|string|max:100',
+            'deskripsi' => 'nullable|string',
+        ]);
+
+        $jenisOlahraga->update($request->all());
+
+        return redirect()->route('admin.jenis-olahraga.index')->with('success', 'Jenis olahraga berhasil diupdate!');
+    }
+
+    public function jenisOlahragaDestroy($id)
+    {
+        $jenisOlahraga = JenisOlahraga::findOrFail($id);
+        $jenisOlahraga->delete();
+
+        return redirect()->route('admin.jenis-olahraga.index')->with('success', 'Jenis olahraga berhasil dihapus!');
+    }
+
+    // Kelola User
+    public function users()
+    {
+        $users = User::where('role', 'user')->latest()->get();
+        return view('admin.users', compact('users'));
+    }
+
+    public function deleteUser($id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return redirect()->route('admin.users')->with('success', 'User berhasil dihapus!');
+    }
 }

@@ -59,4 +59,16 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/lapangan/{id}/edit', [AdminController::class, 'lapanganEdit'])->name('lapangan.edit');
     Route::put('/lapangan/{id}', [AdminController::class, 'lapanganUpdate'])->name('lapangan.update');
     Route::delete('/lapangan/{id}', [AdminController::class, 'lapanganDestroy'])->name('lapangan.destroy');
+
+    // Jenis Olahraga
+    Route::get('/jenis-olahraga', [AdminController::class, 'jenisOlahragaIndex'])->name('jenis-olahraga.index');
+    Route::get('/jenis-olahraga/create', [AdminController::class, 'jenisOlahragaCreate'])->name('jenis-olahraga.create');
+    Route::post('/jenis-olahraga', [AdminController::class, 'jenisOlahragaStore'])->name('jenis-olahraga.store');
+    Route::get('/jenis-olahraga/{id}/edit', [AdminController::class, 'jenisOlahragaEdit'])->name('jenis-olahraga.edit');
+    Route::put('/jenis-olahraga/{id}', [AdminController::class, 'jenisOlahragaUpdate'])->name('jenis-olahraga.update');
+    Route::delete('/jenis-olahraga/{id}', [AdminController::class, 'jenisOlahragaDestroy'])->name('jenis-olahraga.destroy');
+
+    // Kelola User
+    Route::get('/users', [AdminController::class, 'users'])->name('users');
+    Route::delete('/users/{id}', [AdminController::class, 'deleteUser'])->name('users.delete');
 });
