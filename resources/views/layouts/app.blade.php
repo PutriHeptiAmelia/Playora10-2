@@ -15,7 +15,12 @@
             --bg: #f8fafc;
             --text: #1e293b;
         }
-        body { font-family: 'Poppins', sans-serif; background-color: var(--bg); color: var(--text); }
+        /* Tambahan sedikit CSS agar transisi smooth */
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background-color: var(--bg); 
+            color: var(--text); 
+        }
         .navbar { background-color: #ffffff; border-bottom: 2px solid #e2e8f0; }
         .navbar-brand { font-weight: 700; color: var(--primary) !important; letter-spacing: 2px; font-size: 1.4rem; }
         .nav-link { font-weight: 500; color: #444 !important; transition: color 0.2s; }
@@ -24,12 +29,19 @@
         .btn-primary:hover { background-color: var(--primary-dark); border-color: var(--primary-dark); }
         .text-primary { color: var(--primary) !important; }
         .bg-primary { background-color: var(--primary) !important; }
-        .footer { background-color: #1e293b; color: #94a3b8; padding: 25px 0; margin-top: 60px; }
+        
+        /* Footer diatur margin-top: auto untuk mendorongnya ke paling bawah */
+        .footer { 
+            background-color: #1e293b; 
+            color: #94a3b8; 
+            padding: 25px 0; 
+            margin-top: auto; /* Berubah dari margin-top: 60px */
+        }
         .footer strong { color: var(--primary); }
         .dropdown-item:hover { color: var(--primary); background-color: #f0fdf4; }
     </style>
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 
     <nav class="navbar navbar-expand-lg sticky-top shadow-sm">
         <div class="container">
@@ -113,7 +125,7 @@
         </div>
     </nav>
 
-    <main>
+    <main class="flex-grow-1">
         @yield('content')
     </main>
 

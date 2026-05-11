@@ -21,6 +21,7 @@ class LapanganSeeder extends Seeder
             [
                 'jenis_olahraga_id' => $futsal->id,
                 'nama' => 'Lapangan Futsal A',
+                'foto_lapangan' => 'images/lapanganFutsalA',
                 'harga_per_jam' => 100000,
                 'status' => 'active',
                 'fasilitas' => 'AC, Toilet, Parkir, Kantin',
@@ -28,6 +29,7 @@ class LapanganSeeder extends Seeder
             [
                 'jenis_olahraga_id' => $futsal->id,
                 'nama' => 'Lapangan Futsal B',
+                'foto_lapangan' => 'images/lapanganFutsalB',
                 'harga_per_jam' => 120000,
                 'status' => 'active',
                 'fasilitas' => 'AC, Toilet, Parkir, Loker',
@@ -35,6 +37,7 @@ class LapanganSeeder extends Seeder
             [
                 'jenis_olahraga_id' => $futsal->id,
                 'nama' => 'Lapangan Futsal C',
+                'foto_lapangan' => 'images/lapanganFutsalC',
                 'harga_per_jam' => 90000,
                 'status' => 'active',
                 'fasilitas' => 'Toilet, Parkir',
@@ -42,6 +45,7 @@ class LapanganSeeder extends Seeder
             [
                 'jenis_olahraga_id' => $futsal->id,
                 'nama' => 'Lapangan Futsal D',
+                'foto_lapangan' => 'images/lapanganFutsalD',
                 'harga_per_jam' => 110000,
                 'status' => 'active',
                 'fasilitas' => 'AC, Toilet, Parkir, Tribun',
@@ -49,6 +53,7 @@ class LapanganSeeder extends Seeder
             [
                 'jenis_olahraga_id' => $futsal->id,
                 'nama' => 'Lapangan Futsal E',
+                'foto_lapangan' => 'images/lapanganFutsalE',
                 'harga_per_jam' => 95000,
                 'status' => 'inactive',
                 'fasilitas' => 'Toilet, Parkir',
@@ -57,6 +62,7 @@ class LapanganSeeder extends Seeder
             [
                 'jenis_olahraga_id' => $badminton->id,
                 'nama' => 'Lapangan Badminton A',
+                'foto_lapangan' => 'images/lapanganBadmintonA',
                 'harga_per_jam' => 75000,
                 'status' => 'active',
                 'fasilitas' => 'AC, Toilet, Parkir',
@@ -64,6 +70,7 @@ class LapanganSeeder extends Seeder
             [
                 'jenis_olahraga_id' => $badminton->id,
                 'nama' => 'Lapangan Badminton B',
+                'foto_lapangan' => 'images/lapanganBadmintonB',
                 'harga_per_jam' => 80000,
                 'status' => 'active',
                 'fasilitas' => 'AC, Toilet, Parkir, Loker',
@@ -71,6 +78,7 @@ class LapanganSeeder extends Seeder
             [
                 'jenis_olahraga_id' => $badminton->id,
                 'nama' => 'Lapangan Badminton C',
+                'foto_lapangan' => 'images/lapanganBadmintonC',
                 'harga_per_jam' => 70000,
                 'status' => 'active',
                 'fasilitas' => 'Toilet, Parkir',
@@ -79,6 +87,7 @@ class LapanganSeeder extends Seeder
             [
                 'jenis_olahraga_id' => $basket->id,
                 'nama' => 'Lapangan Basket A',
+                'foto_lapangan' => 'images/lapanganBasketA',
                 'harga_per_jam' => 150000,
                 'status' => 'active',
                 'fasilitas' => 'Toilet, Parkir, Tribun',
@@ -86,6 +95,7 @@ class LapanganSeeder extends Seeder
             [
                 'jenis_olahraga_id' => $basket->id,
                 'nama' => 'Lapangan Basket B',
+                'foto_lapangan' => 'images/lapanganBasketB',
                 'harga_per_jam' => 130000,
                 'status' => 'active',
                 'fasilitas' => 'Toilet, Parkir',
@@ -93,6 +103,7 @@ class LapanganSeeder extends Seeder
             [
                 'jenis_olahraga_id' => $basket->id,
                 'nama' => 'Lapangan Basket C',
+                'foto_lapangan' => 'images/lapanganBasketC',
                 'harga_per_jam' => 140000,
                 'status' => 'active',
                 'fasilitas' => 'Toilet, Parkir, Kantin',
@@ -101,6 +112,7 @@ class LapanganSeeder extends Seeder
             [
                 'jenis_olahraga_id' => $tennis->id,
                 'nama' => 'Lapangan Tennis A',
+                'foto_lapangan' => 'images/lapanganTennisA',
                 'harga_per_jam' => 120000,
                 'status' => 'active',
                 'fasilitas' => 'Toilet, Parkir',
@@ -108,6 +120,7 @@ class LapanganSeeder extends Seeder
             [
                 'jenis_olahraga_id' => $tennis->id,
                 'nama' => 'Lapangan Tennis B',
+                'foto_lapangan' => 'images/lapanganTennisB',
                 'harga_per_jam' => 130000,
                 'status' => 'active',
                 'fasilitas' => 'Toilet, Parkir, Kantin',
@@ -116,6 +129,7 @@ class LapanganSeeder extends Seeder
             [
                 'jenis_olahraga_id' => $voli->id,
                 'nama' => 'Lapangan Voli A',
+                'foto_lapangan' => 'images/lapanganVoliA',
                 'harga_per_jam' => 80000,
                 'status' => 'active',
                 'fasilitas' => 'Toilet, Parkir',
@@ -123,6 +137,7 @@ class LapanganSeeder extends Seeder
             [
                 'jenis_olahraga_id' => $voli->id,
                 'nama' => 'Lapangan Voli B',
+                'foto_lapangan' => 'images/lapanganVoliB',
                 'harga_per_jam' => 85000,
                 'status' => 'active',
                 'fasilitas' => 'Toilet, Parkir, Tribun',

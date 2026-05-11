@@ -1,0 +1,72 @@
+# ============================================
+# Candidate Elimination Algorithm
+# Studi Kasus Prediksi Aktivitas Olahraga
+# Nama: Pandu Sahala Sitanggang
+# NPM: 2415061089
+# Kelas: PSTI C
+# ============================================
+
+# Dataset
+data = [
+    ['Cerah', 'Normal', 'Pelan', 'Ya'],
+    ['Cerah', 'Tinggi', 'Pelan', 'Ya'],
+    ['Hujan', 'Tinggi', 'Pelan', 'Tidak'],
+    ['Cerah', 'Normal', 'Kencang', 'Ya']
+]
+
+concepts = [row[:-1] for row in data]
+target = [row[-1] for row in data]
+
+S = concepts[0].copy()
+
+G = [['?' for _ in range(len(S))] for _ in range(len(S))]
+
+print("=== Candidate Elimination Algorithm ===\n")
+
+for i, h in enumerate(concepts):
+
+    print(f"Data ke-{i+1}")
+    print(f"Data : {h}")
+    print(f"Target : {target[i]}")
+
+    if target[i] == "Ya":
+
+        for x in range(len(S)):
+
+            if h[x] != S[x]:
+                S[x] = '?'
+                G[x][x] = '?'
+
+    elif target[i] == "Tidak":
+
+        for x in range(len(S)):
+
+            if h[x] != S[x]:
+                G[x][x] = S[x]
+
+            else:
+                G[x][x] = '?'
+
+    print("\nSpecific Hypothesis (S):")
+    print(S)
+
+    print("\nGeneral Hypothesis (G):")
+    for g in G:
+        print(g)
+
+    print("\n-----------------------------------\n")
+
+final_G = []
+
+for g in G:
+    if g != ['?', '?', '?']:
+        final_G.append(g)
+
+print("=== Hipotesis Akhir ===\n")
+
+print("Specific Hypothesis Final (S):")
+print(S)
+
+print("\nGeneral Hypothesis Final (G):")
+for g in final_G:
+    print(g)
