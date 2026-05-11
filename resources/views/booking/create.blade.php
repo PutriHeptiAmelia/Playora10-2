@@ -69,4 +69,72 @@
         </div>
     </div>
 </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const jamMulaiInput = document.querySelector('input[name="jam_mulai"]');
+        const jamSelesaiInput = document.querySelector('input[name="jam_selesai"]');
+        const durasiInput = document.querySelector('input[name="durasi_jam"]');
+
+        function updateJamSelesai() {
+            if (jamMulaiInput.value && durasiInput.value) {
+                let timeParts = jamMulaiInput.value.split(':');
+                let hours = parseInt(timeParts[0], 10);
+                let minutes = parseInt(timeParts[1], 10);
+                let duration = parseInt(durasiInput.value, 10);
+
+                if (!isNaN(hours) && !isNaN(minutes) && !isNaN(duration)) {
+                    hours += duration;
+                    hours = hours % 24; // Ensure it stays within 24 hours format
+                    
+                    let formattedHours = hours.toString().padStart(2, '0');
+                    let formattedMinutes = minutes.toString().padStart(2, '0');
+                    
+                    jamSelesaiInput.value = `${formattedHours}:${formattedMinutes}`;
+                }
+            }
+        }
+
+        // Jalankan perhitungan saat input berubah
+        jamMulaiInput.addEventListener('change', function() {
+            // Memaksa menit menjadi 00 agar tidak bisa per menit/detik
+            if (this.value) {
+                let timeParts = this.value.split(':');
+                let hour = timeParts[0];
+                this.value = `${hour}:00`;
+            }
+            updateJamSelesai();
+        });
+        
+        durasiInput.addEventListener('input', updateJamSelesai);
+        
+        // Event listener untuk jam selesai jika pengguna mengubahnya secara manual
+        jamSelesaiInput.addEventListener('change', function() {
+            // Memaksa menit menjadi 00 agar tidak bisa per menit/detik
+            if (this.value) {
+                let timeParts = this.value.split(':');
+                let hour = timeParts[0];
+                this.value = `${hour}:00`;
+            }
+            
+            // Hitung ulang durasi berdasarkan selisih jam mulai dan jam selesai
+            if (jamMulaiInput.value && this.value) {
+                let startHour = parseInt(jamMulaiInput.value.split(':')[0], 10);
+                let endHour = parseInt(this.value.split(':')[0], 10);
+                
+                let diff = endHour - startHour;
+                // Jika jam selesai lebih kecil dari jam mulai, asumsikan melewati tengah malam
+                if (diff < 0) {
+                    diff += 24;
+                }
+                
+                // Pastikan durasi minimal 1 jam dan tidak NaN
+                if (!isNaN(diff) && diff > 0) {
+                    durasiInput.value = diff;
+                }
+            }
+        });
+    });
+</script>
 @endsection
