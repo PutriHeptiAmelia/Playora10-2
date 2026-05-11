@@ -61,6 +61,9 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('booking.index') }}"><i class="bi bi-calendar-check me-1"></i>Booking Saya</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('booking.riwayat') }}"><i class="bi bi-clock-history me-1"></i>Riwayat</a>
+                            </li>
                         @endif
 
                         <li class="nav-item dropdown ms-2">

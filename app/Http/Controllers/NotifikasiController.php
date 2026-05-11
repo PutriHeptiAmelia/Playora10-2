@@ -4,13 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\JenisOlahraga;
 
 class NotifikasiController extends Controller
 {
     public function index()
     {
         $notifikasi = Auth::user()->notifications;
-        return view('notifikasi.index', compact('notifikasi'));
+        $jenisOlahraga = JenisOlahraga::all();
+        return view('notifikasi.index', compact('notifikasi', 'jenisOlahraga'));
     }
 
     public function read($id)
