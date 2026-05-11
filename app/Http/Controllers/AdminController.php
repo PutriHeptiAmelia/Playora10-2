@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use App\Models\Lapangan;
+use App\Models\JenisOlahraga;
 use App\Models\Pembayaran;
 use App\Models\User;
 use App\Notifications\BookingNotification;
@@ -86,5 +87,65 @@ class AdminController extends Controller
         $pembayaran->booking->user->notify(new PembayaranNotification($pembayaran, $pesan));
 
         return redirect()->route('admin.pembayaran')->with('success', 'Status pembayaran berhasil diupdate!');
+    }
+
+    // Kelola Lapangan
+    public function lapanganIndex()
+    {
+        $lapangan = Lapangan::with('jenisOlahraga')->get();
+        return view('admin.lapangan', compact('lapangan'));
+    }
+
+    public function lapanganCreate()
+    {
+        $jenisOlahraga = JenisOlahraga::all();
+        return view('admin.lapangan-create', compact('jenisOlahraga'));
+    }
+
+    public function lapanganStore(Request $request)
+    {
+        $request->validate([
+            'jenis_olahraga_id' => 'required|exists:jenis_olahraga,id',
+            'nama' => 'required|string|max:100',
+            'harga_per_jam' => 'required|numeric',
+            'status' => 'in:active,inactive',
+            'fasilitas' => 'nullable|string',
+        ]);
+
+        Lapangan::create($request->all());
+
+        return redirect()->route('admin.lapangan.index')->with('success', 'Lapangan berhasil ditambahkan!');
+    }
+
+    public function lapanganEdit($id)
+    {
+        $lapangan = Lapangan::findOrFail($id);
+        $jenisOlahraga = JenisOlahraga::all();
+        return view('admin.lapangan-edit', compact('lapangan', 'jenisOlahraga'));
+    }
+
+    public function lapanganUpdate(Request $request, $id)
+    {
+        $lapangan = Lapangan::findOrFail($id);
+
+        $request->validate([
+            'jenis_olahraga_id' => 'required|exists:jenis_olahraga,id',
+            'nama' => 'required|string|max:100',
+            'harga_per_jam' => 'required|numeric',
+            'status' => 'in:active,inactive',
+            'fasilitas' => 'nullable|string',
+        ]);
+
+        $lapangan->update($request->all());
+
+        return redirect()->route('admin.lapangan.index')->with('success', 'Lapangan berhasil diupdate!');
+    }
+
+    public function lapanganDestroy($id)
+    {
+        $lapangan = Lapangan::findOrFail($id);
+        $lapangan->delete();
+
+        return redirect()->route('admin.lapangan.index')->with('success', 'Lapangan berhasil dihapus!');
     }
 }

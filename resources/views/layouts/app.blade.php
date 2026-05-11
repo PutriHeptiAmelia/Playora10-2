@@ -22,10 +22,7 @@
         .nav-link:hover { color: var(--primary) !important; }
         .btn-primary { background-color: var(--primary); border-color: var(--primary); border-radius: 8px; padding: 10px 25px; font-weight: 600; }
         .btn-primary:hover { background-color: var(--primary-dark); border-color: var(--primary-dark); }
-        .btn-accent { background-color: var(--accent); border-color: var(--accent); color: white; border-radius: 8px; padding: 10px 25px; font-weight: 600; }
-        .btn-accent:hover { background-color: #ea6c00; border-color: #ea6c00; color: white; }
         .text-primary { color: var(--primary) !important; }
-        .text-accent { color: var(--accent) !important; }
         .bg-primary { background-color: var(--primary) !important; }
         .footer { background-color: #1e293b; color: #94a3b8; padding: 25px 0; margin-top: 60px; }
         .footer strong { color: var(--primary); }
@@ -42,22 +39,48 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center gap-2">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('lapangan.index') }}"><i class="bi bi-grid me-1"></i>Daftar Lapangan</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('booking.index') }}"><i class="bi bi-calendar-check me-1"></i>Cek Booking</a>
-                    </li>
 
                     @auth
+                        @if(Auth::user()->role === 'admin')
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('admin.dashboard') }}"><i class="bi bi-speedometer2 me-1"></i>Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('admin.lapangan.index') }}"><i class="bi bi-grid me-1"></i>Kelola Lapangan</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('admin.bookings') }}"><i class="bi bi-calendar-check me-1"></i>Kelola Booking</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('admin.pembayaran') }}"><i class="bi bi-cash-stack me-1"></i>Kelola Pembayaran</a>
+                            </li>
+                        @else
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('lapangan.index') }}"><i class="bi bi-grid me-1"></i>Daftar Lapangan</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('booking.index') }}"><i class="bi bi-calendar-check me-1"></i>Booking Saya</a>
+                            </li>
+                        @endif
+
                         <li class="nav-item dropdown ms-2">
                             <a class="nav-link dropdown-toggle fw-semibold" href="#" role="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-person-circle me-1"></i>{{ Auth::user()->name }}
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3">
-                                <li><a class="dropdown-item" href="#"><i class="bi bi-bell me-2"></i>Notifikasi</a></li>
-                                <li><a class="dropdown-item" href="{{ route('booking.index') }}"><i class="bi bi-calendar-check me-2"></i>Booking Saya</a></li>
-                                <li><hr class="dropdown-divider"></li>
+                                @if(Auth::user()->role !== 'admin')
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('notifikasi.index') }}">
+                                            <i class="bi bi-bell me-2"></i>Notifikasi
+                                            @if(Auth::user()->unreadNotifications->count() > 0)
+                                                <span class="badge rounded-pill ms-1" style="background-color:#f97316;">
+                                                    {{ Auth::user()->unreadNotifications->count() }}
+                                                </span>
+                                            @endif
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                @endif
                                 <li>
                                     <form action="{{ route('logout') }}" method="POST">
                                         @csrf
@@ -69,10 +92,14 @@
                             </ul>
                         </li>
                     @else
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('lapangan.index') }}"><i class="bi bi-grid me-1"></i>Daftar Lapangan</a>
+                        </li>
                         <li class="nav-item ms-2">
                             <a class="btn btn-primary btn-sm" href="{{ route('login') }}">Login</a>
                         </li>
                     @endauth
+
                 </ul>
             </div>
         </div>

@@ -5,6 +5,7 @@ use App\Http\Controllers\LapanganController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\NotifikasiController;
 use App\Http\Controllers\Auth\LoginController;
 
 // Halaman utama
@@ -31,13 +32,26 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/pembayaran/create/{booking_id}', [PembayaranController::class, 'createWeb'])->name('pembayaran.create');
     Route::post('/pembayaran', [PembayaranController::class, 'storeWeb'])->name('pembayaran.store');
+
+    Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi.index');
+    Route::post('/notifikasi/{id}/read', [NotifikasiController::class, 'read'])->name('notifikasi.read');
+    Route::post('/notifikasi/read-all', [NotifikasiController::class, 'readAll'])->name('notifikasi.readAll');
 });
 
 // Admin routes
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+
     Route::get('/bookings', [AdminController::class, 'bookings'])->name('bookings');
     Route::put('/bookings/{id}', [AdminController::class, 'updateBooking'])->name('booking.update');
+
     Route::get('/pembayaran', [AdminController::class, 'pembayaran'])->name('pembayaran');
     Route::put('/pembayaran/{id}/konfirmasi', [AdminController::class, 'konfirmasiPembayaran'])->name('pembayaran.konfirmasi');
+
+    Route::get('/lapangan', [AdminController::class, 'lapanganIndex'])->name('lapangan.index');
+    Route::get('/lapangan/create', [AdminController::class, 'lapanganCreate'])->name('lapangan.create');
+    Route::post('/lapangan', [AdminController::class, 'lapanganStore'])->name('lapangan.store');
+    Route::get('/lapangan/{id}/edit', [AdminController::class, 'lapanganEdit'])->name('lapangan.edit');
+    Route::put('/lapangan/{id}', [AdminController::class, 'lapanganUpdate'])->name('lapangan.update');
+    Route::delete('/lapangan/{id}', [AdminController::class, 'lapanganDestroy'])->name('lapangan.destroy');
 });
