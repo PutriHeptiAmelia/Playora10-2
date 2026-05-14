@@ -17,7 +17,11 @@ class PembayaranController extends Controller
         $booking = Booking::with('lapangan')->findOrFail($booking_id);
 
         if ($booking->user_id !== Auth::id()) {
-            abort(403);
+            abort(403, 'Anda tidak memiliki akses ke booking ini.');
+        }
+
+        if ($booking->status !== 'confirmed') {
+            return back()->with('error', 'Booking harus dikonfirmasi admin terlebih dahulu sebelum Anda dapat melakukan pembayaran.');
         }
 
         return view('pembayaran.create', compact('booking'));
@@ -34,7 +38,11 @@ class PembayaranController extends Controller
         $booking = Booking::findOrFail($request->booking_id);
 
         if ($booking->user_id !== Auth::id()) {
-            abort(403);
+            abort(403, 'Anda tidak memiliki akses ke booking ini.');
+        }
+
+        if ($booking->status !== 'confirmed') {
+            return back()->with('error', 'Booking harus dikonfirmasi admin terlebih dahulu sebelum Anda dapat melakukan pembayaran.');
         }
 
         $bukti_bayar = null;
@@ -82,7 +90,11 @@ class PembayaranController extends Controller
         $booking = Booking::findOrFail($request->booking_id);
 
         if ($booking->user_id !== $request->user()->id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+            return response()->json(['message' => 'Anda tidak memiliki akses ke booking ini.'], 403);
+        }
+
+        if ($booking->status !== 'confirmed') {
+            return response()->json(['message' => 'Booking harus dikonfirmasi admin terlebih dahulu sebelum Anda dapat melakukan pembayaran.'], 400);
         }
 
         $bukti_bayar = null;
@@ -111,7 +123,7 @@ class PembayaranController extends Controller
     public function konfirmasi(Request $request, $id)
     {
         if ($request->user()->role !== 'admin') {
-            return response()->json(['message' => 'Unauthorized'], 403);
+            return response()->json(['message' => 'Anda tidak memiliki akses untuk konfirmasi pembayaran.'], 403);
         }
 
         $pembayaran = Pembayaran::with('booking.user')->findOrFail($id);
@@ -126,8 +138,7 @@ class PembayaranController extends Controller
         ]);
 
         if ($request->status === 'paid') {
-            $pembayaran->booking->update(['status' => 'confirmed']);
-            $pesan = 'Pembayaran kamu telah dikonfirmasi, booking aktif!';
+            $pesan = 'Pembayaran kamu telah dikonfirmasi, booking sudah aktif!';
         } elseif ($request->status === 'rejected') {
             $pembayaran->booking->update(['status' => 'cancelled']);
             $pesan = 'Pembayaran kamu ditolak oleh admin, silakan hubungi admin.';
@@ -146,7 +157,7 @@ class PembayaranController extends Controller
         $pembayaran = Pembayaran::with(['booking.user', 'booking.lapangan'])->findOrFail($id);
 
         if ($request->user()->role !== 'admin' && $pembayaran->booking->user_id !== $request->user()->id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+            return response()->json(['message' => 'Anda tidak memiliki akses ke pembayaran ini.'], 403);
         }
 
         return response()->json($pembayaran);

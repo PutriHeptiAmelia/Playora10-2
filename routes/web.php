@@ -27,14 +27,17 @@ Route::get('/lapangan/{id}', [LapanganController::class, 'show'])->name('lapanga
 
 // Protected routes (harus login)
 Route::middleware('auth')->group(function () {
-    Route::get('/booking', [BookingController::class, 'indexWeb'])->name('booking.index');
-    Route::get('/booking/create/{lapangan_id}', [BookingController::class, 'createWeb'])->name('booking.create');
-    Route::post('/booking', [BookingController::class, 'storeWeb'])->name('booking.store');
-    Route::get('/booking/{id}', [BookingController::class, 'showWeb'])->name('booking.show');
-    Route::get('/riwayat', [BookingController::class, 'riwayatWeb'])->name('booking.riwayat');
+    // Booking routes - hanya untuk user, bukan admin
+    Route::middleware('user-only')->group(function () {
+        Route::get('/booking', [BookingController::class, 'indexWeb'])->name('booking.index');
+        Route::get('/booking/create/{lapangan_id}', [BookingController::class, 'createWeb'])->name('booking.create');
+        Route::post('/booking', [BookingController::class, 'storeWeb'])->name('booking.store');
+        Route::get('/booking/{id}', [BookingController::class, 'showWeb'])->name('booking.show');
+        Route::get('/riwayat', [BookingController::class, 'riwayatWeb'])->name('booking.riwayat');
 
-    Route::get('/pembayaran/create/{booking_id}', [PembayaranController::class, 'createWeb'])->name('pembayaran.create');
-    Route::post('/pembayaran', [PembayaranController::class, 'storeWeb'])->name('pembayaran.store');
+        Route::get('/pembayaran/create/{booking_id}', [PembayaranController::class, 'createWeb'])->name('pembayaran.create');
+        Route::post('/pembayaran', [PembayaranController::class, 'storeWeb'])->name('pembayaran.store');
+    });
 
     Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi.index');
     Route::post('/notifikasi/{id}/read', [NotifikasiController::class, 'read'])->name('notifikasi.read');

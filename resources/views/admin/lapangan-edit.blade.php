@@ -13,7 +13,7 @@
                     <div class="alert alert-danger rounded-3">{{ session('error') }}</div>
                 @endif
 
-                <form action="{{ route('admin.lapangan.update', $lapangan->id) }}" method="POST">
+                <form action="{{ route('admin.lapangan.update', $lapangan->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
@@ -65,6 +65,28 @@
                             <option value="active" {{ $lapangan->status == 'active' ? 'selected' : '' }}>Aktif</option>
                             <option value="inactive" {{ $lapangan->status == 'inactive' ? 'selected' : '' }}>Nonaktif</option>
                         </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Ganti Gambar Lapangan</label>
+                        <div class="mb-3">
+                            @php
+                                $imageName = lcfirst(str_replace(' ', '', $lapangan->nama)) . '.jpg.jpeg';
+                                $imagePath = public_path('images/' . $imageName);
+                                $imageUrl = file_exists($imagePath) ? asset('images/' . $imageName) : asset('images/hero-lapangan.jpg');
+                            @endphp
+                            <div style="position:relative; max-width:200px; margin-bottom:15px;">
+                                <img src="{{ $imageUrl }}" alt="{{ $lapangan->nama }}"
+                                     style="width:100%; height:150px; object-fit:cover; border-radius:8px; border:2px solid #e5e7eb;">
+                                <small class="text-muted d-block mt-2">Gambar saat ini</small>
+                            </div>
+                        </div>
+                        <input type="file" name="gambar" class="form-control rounded-3 @error('gambar') is-invalid @enderror"
+                               accept="image/*">
+                        <small class="text-muted d-block mt-2">Format: JPG, PNG (Max 2MB). Biarkan kosong jika tidak ingin mengganti.</small>
+                        @error('gambar')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <button type="submit" class="btn btn-primary w-100 py-2">Update</button>

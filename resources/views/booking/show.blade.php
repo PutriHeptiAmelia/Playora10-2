@@ -53,11 +53,11 @@
                         <td class="text-muted">Status</td>
                         <td>
                             @if($booking->status === 'pending')
-                                <span class="badge bg-warning text-dark">Pending</span>
+                                <span class="badge bg-warning text-dark">Menunggu Konfirmasi</span>
                             @elseif($booking->status === 'confirmed')
-                                <span class="badge bg-success">Confirmed</span>
+                                <span class="badge bg-success">Dikonfirmasi</span>
                             @else
-                                <span class="badge bg-danger">Cancelled</span>
+                                <span class="badge bg-danger">Dibatalkan</span>
                             @endif
                         </td>
                     </tr>
@@ -80,11 +80,11 @@
                             <td class="text-muted">Status</td>
                             <td>
                                 @if($booking->pembayaran->status === 'unpaid')
-                                    <span class="badge bg-warning text-dark">Unpaid</span>
+                                    <span class="badge bg-warning text-dark">Belum Dibayar</span>
                                 @elseif($booking->pembayaran->status === 'paid')
-                                    <span class="badge bg-success">Paid</span>
+                                    <span class="badge bg-success">Dibayar</span>
                                 @else
-                                    <span class="badge bg-danger">Rejected</span>
+                                    <span class="badge bg-danger">Ditolak</span>
                                 @endif
                             </td>
                         </tr>

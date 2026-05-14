@@ -174,7 +174,7 @@ class BookingController extends Controller
         $booking = Booking::with(['user', 'lapangan', 'pembayaran'])->findOrFail($id);
 
         if ($request->user()->role !== 'admin' && $booking->user_id !== $request->user()->id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+            return response()->json(['message' => 'Anda tidak memiliki akses ke booking ini.'], 403);
         }
 
         return response()->json($booking);
@@ -183,7 +183,7 @@ class BookingController extends Controller
     public function updateStatus(Request $request, $id)
     {
         if ($request->user()->role !== 'admin') {
-            return response()->json(['message' => 'Unauthorized'], 403);
+            return response()->json(['message' => 'Anda tidak memiliki akses untuk mengubah status booking.'], 403);
         }
 
         $booking = Booking::with(['lapangan', 'user'])->findOrFail($id);
@@ -211,12 +211,36 @@ class BookingController extends Controller
     public function destroy(Request $request, $id)
     {
         if ($request->user()->role !== 'admin') {
-            return response()->json(['message' => 'Unauthorized'], 403);
+            return response()->json(['message' => 'Anda tidak memiliki akses untuk menghapus booking.'], 403);
         }
 
         $booking = Booking::findOrFail($id);
         $booking->delete();
 
         return response()->json(['message' => 'Booking berhasil dihapus']);
+    }
+
+    public function checkAvailability(Request $request)
+    {
+        $request->validate([
+            'lapangan_id' => 'required|exists:lapangan,id',
+            'tanggal' => 'required|date',
+        ]);
+
+        $bookings = Booking::where('lapangan_id', $request->lapangan_id)
+            ->where('tanggal', $request->tanggal)
+            ->where('status', '!=', 'cancelled')
+            ->select('jam_mulai', 'jam_selesai')
+            ->get();
+
+        return response()->json([
+            'available' => true,
+            'bookings' => $bookings->map(function ($b) {
+                return [
+                    'jam_mulai' => $b->jam_mulai,
+                    'jam_selesai' => $b->jam_selesai,
+                ];
+            }),
+        ]);
     }
 }

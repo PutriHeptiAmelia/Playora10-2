@@ -13,7 +13,7 @@
                     <div class="alert alert-danger rounded-3">{{ session('error') }}</div>
                 @endif
 
-                <form action="{{ route('admin.lapangan.store') }}" method="POST">
+                <form action="{{ route('admin.lapangan.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Jenis Olahraga</label>
@@ -63,6 +63,16 @@
                             <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Aktif</option>
                             <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Nonaktif</option>
                         </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Upload Gambar Lapangan</label>
+                        <input type="file" name="gambar" class="form-control rounded-3 @error('gambar') is-invalid @enderror"
+                               accept="image/*">
+                        <small class="text-muted d-block mt-2">Format: JPG, PNG (Max 2MB). Direkomendasikan untuk upload gambar lapangan Anda.</small>
+                        @error('gambar')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <button type="submit" class="btn btn-primary w-100 py-2">Simpan</button>

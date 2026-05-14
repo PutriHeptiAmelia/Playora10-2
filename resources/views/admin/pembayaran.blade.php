@@ -137,25 +137,25 @@
 
                             <td class="px-4 py-3">
 
-                                @if($item->status === 'pending')
+                                @if($item->status === 'unpaid')
 
                                     <span class="badge rounded-pill px-3 py-2"
                                           style="background:rgba(234,179,8,0.15);
                                           color:#facc15;">
 
                                         <i class="bi bi-clock-history me-1"></i>
-                                        Pending
+                                        Belum Dibayar
 
                                     </span>
 
-                                @elseif($item->status === 'confirmed')
+                                @elseif($item->status === 'paid')
 
                                     <span class="badge rounded-pill px-3 py-2"
                                           style="background:rgba(22,163,74,0.15);
                                           color:#4ade80;">
 
                                         <i class="bi bi-check-circle-fill me-1"></i>
-                                        Confirmed
+                                        Dibayar
 
                                     </span>
 
@@ -166,7 +166,7 @@
                                           color:#f87171;">
 
                                         <i class="bi bi-x-circle-fill me-1"></i>
-                                        Rejected
+                                        Ditolak
 
                                     </span>
 
@@ -176,11 +176,11 @@
 
                             <td class="px-4 py-3 text-center">
 
-                                @if($item->status === 'pending')
+                                @if($item->status === 'unpaid')
 
                                     <div class="d-flex gap-2 justify-content-center">
 
-                                        <form action="{{ route('admin.pembayaran.update', $item->id) }}"
+                                        <form action="{{ route('admin.pembayaran.konfirmasi', $item->id) }}"
                                               method="POST">
 
                                             @csrf
@@ -188,7 +188,7 @@
 
                                             <input type="hidden"
                                                    name="status"
-                                                   value="confirmed">
+                                                   value="paid">
 
                                             <button type="submit"
                                                     class="btn btn-success btn-sm rounded-3 px-3">
@@ -199,7 +199,7 @@
 
                                         </form>
 
-                                        <form action="{{ route('admin.pembayaran.update', $item->id) }}"
+                                        <form action="{{ route('admin.pembayaran.konfirmasi', $item->id) }}"
                                               method="POST">
 
                                             @csrf

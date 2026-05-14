@@ -77,8 +77,7 @@ class AdminController extends Controller
         ]);
 
         if ($request->status === 'paid') {
-            $pembayaran->booking->update(['status' => 'confirmed']);
-            $pesan = 'Pembayaran kamu telah dikonfirmasi, booking aktif!';
+            $pesan = 'Pembayaran kamu telah dikonfirmasi, booking sudah aktif!';
         } else {
             $pembayaran->booking->update(['status' => 'cancelled']);
             $pesan = 'Pembayaran kamu ditolak oleh admin, silakan hubungi admin.';
@@ -134,9 +133,17 @@ class AdminController extends Controller
             'harga_per_jam' => 'required|numeric',
             'status' => 'in:active,inactive',
             'fasilitas' => 'nullable|string',
+            'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        $lapangan->update($request->all());
+        // Handle file upload
+        if ($request->hasFile('gambar')) {
+            $file = $request->file('gambar');
+            $imageName = lcfirst(str_replace(' ', '', $request->nama)) . '.jpg.jpeg';
+            $file->move(public_path('images'), $imageName);
+        }
+
+        $lapangan->update($request->except('gambar'));
 
         return redirect()->route('admin.lapangan.index')->with('success', 'Lapangan berhasil diupdate!');
     }
